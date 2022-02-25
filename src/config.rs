@@ -20,8 +20,15 @@ pub struct ApplicationSettings {
 }
 
 #[derive(Deserialize)]
+pub struct WebDriverSettings {
+    pub address: String,
+    pub port: u16,
+}
+
+#[derive(Deserialize)]
 pub struct Settings {
     pub application: ApplicationSettings,
+    pub webdriver: WebDriverSettings,
 }
 
 pub fn get_config() -> std::result::Result<Settings, config::ConfigError> {

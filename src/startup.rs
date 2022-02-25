@@ -22,11 +22,11 @@ pub fn run(
     Ok(server)
 }
 
-pub async fn get_web_driver() -> Result<WebDriver> {
+pub async fn get_web_driver(address: &str) -> Result<WebDriver> {
     let browser_settings = config::get_browser_settings()?;
     let mut capabilities = thirtyfour::DesiredCapabilities::firefox();
     capabilities.set_preferences(browser_settings)?;
-    let driver = thirtyfour::WebDriver::new("http://localhost:4444", &capabilities).await?;
+    let driver = thirtyfour::WebDriver::new(address, &capabilities).await?;
 
     Ok(driver)
 }
