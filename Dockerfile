@@ -11,7 +11,7 @@ FROM chef AS builder
 COPY --from=planner /app/recipe.json recipe.json
 RUN cargo chef cook --release --recipe-path recipe.json
 COPY . .
-RUN cargo build --release --bin battlemon_rest
+RUN cargo build --release --bin battlemon_screener
 
 FROM debian:bullseye-slim AS runtime
 WORKDIR /app
