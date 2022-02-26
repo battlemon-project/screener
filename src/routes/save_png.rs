@@ -3,12 +3,12 @@ use thirtyfour::{By, WebDriver};
 
 pub async fn save_png(driver: web::Data<WebDriver>) -> HttpResponse {
     driver
-        .get("https://www.clicktorelease.com/tools/CubemapToEquirectangular/index-managed.html")
+        .get("http://constructor")
         .await
         .expect("Couldn't get url");
 
     let element = driver
-        .find_element(By::Id("capture"))
+        .find_element(By::Id("download"))
         .await
         .expect("Couldn't find element");
 
