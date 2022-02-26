@@ -1,8 +1,8 @@
 use std::path::Path;
 
 use actix_web::{web, HttpResponse};
+use thirtyfour::prelude::ElementWaitable;
 use thirtyfour::{By, WebDriver};
-use tokio::io::AsyncWriteExt;
 
 pub async fn save_png(driver: web::Data<WebDriver>) -> HttpResponse {
     driver
@@ -14,6 +14,12 @@ pub async fn save_png(driver: web::Data<WebDriver>) -> HttpResponse {
         .find_element(By::ClassName("threejs-container"))
         .await
         .expect("Couldn't find element");
+
+    element
+        .wait_until()
+        .displayed()
+        .await
+        .expect("Error occurs while waiting element");
 
     let file_path = Path::new("/app/screenshots/screen.png");
     element
