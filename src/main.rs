@@ -8,7 +8,7 @@ async fn main() -> std::io::Result<()> {
     let address = format!("{}:{}", config.application.host, config.application.port);
     let listener = TcpListener::bind(address).expect("Couldn't bind address");
     let remote_webdriver_address =
-        format!("http://{}:{}", config.webdriver.address, config.webdriver.port);
+        format!("{}:{}", config.webdriver.address, config.webdriver.port);
     let web_driver = startup::get_web_driver(&remote_webdriver_address)
         .await
         .expect("Couldn't get web driver");
