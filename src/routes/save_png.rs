@@ -1,3 +1,5 @@
+use std::path::Path;
+
 use actix_web::{web, HttpResponse};
 use thirtyfour::{By, WebDriver};
 use tokio::io::AsyncWriteExt;
@@ -13,18 +15,11 @@ pub async fn save_png(driver: web::Data<WebDriver>) -> HttpResponse {
         .await
         .expect("Couldn't find element");
 
-    let bytes = element
-        .screenshot_as_png()
+    let file_path = Path::new("/app/screenshots/screen.png");
+    element
+        .screenshot(file_path)
         .await
-        .expect("Couldn't click on element");
-
-    let file_path = "/home/seluser/screenshots/screen.png".to_string();
-    let mut file = tokio::fs::File::create(file_path)
-        .await
-        .expect("Couldn't create file");
-    file.write_all(&bytes)
-        .await
-        .expect("Couldn't write bytes to file");
+        .expect("Couldn't save screenshot");
 
     HttpResponse::Ok().finish()
 }
