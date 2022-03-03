@@ -1,37 +1,73 @@
-use serde::Deserialize;
+use serde::{Deserialize};
 use thirtyfour::common::capabilities::firefox::FirefoxPreferences;
+use tokio::sync::OnceCell;
 
 use crate::Result;
 
-pub fn get_browser_settings() -> Result<FirefoxPreferences> {
-    let mut preferences = FirefoxPreferences::new();
-    preferences.set("browser.download.folderList", 2u64)?;
-    preferences.set("browser.download.manager.showWhenStarting", false)?;
-    preferences.set("browser.download.dir", "/home/seluser/screenshots")?;
-    preferences.set("browser.helperApps.neverAsk.saveToDisk", "image/png")?;
-
+pub fn set_up_browser() -> Result<FirefoxPreferences> {
+    let preferences = FirefoxPreferences::new();
     Ok(preferences)
 }
 
 #[derive(Deserialize)]
 pub struct ApplicationSettings {
-    pub host: String,
-    pub port: u16,
+    host: String,
+    port: u16,
+}
+
+impl ApplicationSettings {
+    pub fn address(&self) -> String {
+        format!("{}:{}", self.host, self.port)
+    }
 }
 
 #[derive(Deserialize)]
 pub struct WebDriverSettings {
-    pub address: String,
-    pub port: u16,
+    address: String,
+    port: u16,
+    headless: bool,
+}
+
+impl WebDriverSettings {
+    pub fn url(&self) -> String {
+        format!("http://{}:{}", self.address, self.port)
+    }
+
+    pub fn headless(&self) -> bool {
+        self.headless
+    }
+}
+
+#[derive(Deserialize)]
+pub struct ConstructorSettings {
+    address: String,
+}
+impl ConstructorSettings {
+    pub fn url(&self) -> String {
+        format!("http://{}", self.address)
+    }
+}
+
+#[derive(Deserialize)]
+pub struct IpfsSettings {
+    address: String,
+    port: u16,
+}
+impl IpfsSettings {
+    pub fn url(&self) -> String {
+        format!("http://{}:{}", self.address, self.port)
+    }
 }
 
 #[derive(Deserialize)]
 pub struct Settings {
     pub application: ApplicationSettings,
     pub webdriver: WebDriverSettings,
+    pub constructor: ConstructorSettings,
+    pub ipfs: IpfsSettings,
 }
 
-pub fn get_config() -> std::result::Result<Settings, config::ConfigError> {
+pub fn load_config() -> std::result::Result<Settings, config::ConfigError> {
     let mut settings = config::Config::default();
     let base_path = std::env::current_dir().expect("Failed to determine the current directory");
     let configuration_directory = base_path.join("config");
@@ -76,4 +112,12 @@ impl TryFrom<String> for Environment {
             )),
         }
     }
+}
+
+static CONFIG: OnceCell<Settings> = OnceCell::const_new();
+
+pub async fn get_config() -> &'static Settings {
+    CONFIG
+        .get_or_init(|| async { load_config().expect("Couldn't load config") })
+        .await
 }
