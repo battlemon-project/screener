@@ -6,6 +6,8 @@ edition = "2021"
 [dependencies]
 thirtyfour = "0.28.1"
 tokio = { version = "1.17.0", features = ["fs"] }
-actix-web = "4.0.0-rc.3"
+actix-web = "4.0.1"
 serde = { version = "1.0.136", features = ["derive"] }
 config = { version = "0.11.0", default-features = false, features = ["yaml"] }
+ipfs-api-backend-hyper = "0.3.0"
+mime = "0.3.16"
