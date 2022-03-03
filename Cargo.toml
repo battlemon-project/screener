@@ -11,3 +11,4 @@ serde = { version = "1.0.136", features = ["derive"] }
 config = { version = "0.11.0", default-features = false, features = ["yaml"] }
 ipfs-api-backend-hyper = "0.3.0"
 mime = "0.3.16"
+serde_json = "1.0.79"
