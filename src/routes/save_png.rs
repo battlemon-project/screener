@@ -1,6 +1,7 @@
 use std::io::Cursor;
 use std::time::Duration;
 
+use actix_web::http::StatusCode;
 use actix_web::{web, HttpResponse};
 use ipfs_api_backend_hyper::{IpfsApi, IpfsClient};
 use thirtyfour::{By, WebDriver};
@@ -26,6 +27,9 @@ pub async fn save_png(driver: web::Data<WebDriver>, ipfs: web::Data<IpfsClient>)
         .expect("Couldn't capture screenshot");
     let data = Cursor::new(screenshot);
     let res = ipfs.add(data).await.expect("Couldn't add to ipfs data");
-    dbg!(res);
-    HttpResponse::Ok().finish()
+    let json = serde_json::json!({
+        "hash": res.hash,
+    });
+
+    HttpResponse::Ok().json(json)
 }
