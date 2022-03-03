@@ -1,16 +1,17 @@
-use std::net::TcpListener;
+use ipfs_api_backend_hyper::TryFromUri;
 
 use battlemon_screener::{config, startup};
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
-    let config = config::get_config().expect("Couldn't get config");
-    let address = format!("{}:{}", config.application.host, config.application.port);
-    let listener = TcpListener::bind(address).expect("Couldn't bind address");
-    let remote_webdriver_address =
-        format!("http://{}:{}", config.webdriver.address, config.webdriver.port);
-    let web_driver = startup::get_web_driver(&remote_webdriver_address)
+    let config = config::get_config().await;
+    let listener =
+        std::net::TcpListener::bind(config.application.address()).expect("Couldn't bind address");
+    let web_driver = startup::get_web_driver(&config.webdriver.url(), config.webdriver.headless())
         .await
         .expect("Couldn't get web driver");
-    startup::run(listener, web_driver)?.await
+    let ipfs = ipfs_api_backend_hyper::IpfsClient::from_str(&config.ipfs.url())
+        .expect("Couldn't connect to IPFS");
+
+    startup::run(listener, web_driver, ipfs)?.await
 }
