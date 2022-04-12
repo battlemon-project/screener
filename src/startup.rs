@@ -6,7 +6,7 @@ use thirtyfour::WebDriver;
 
 use crate::{config, routes, Result};
 
-#[tracing::instrument(name = "Running service", skip(listener, web_driver, ipfs))]
+#[tracing::instrument(name = "Running actix-web service", skip(listener, web_driver, ipfs))]
 pub fn run(
     listener: TcpListener,
     web_driver: WebDriver,
@@ -15,11 +15,11 @@ pub fn run(
     let web_driver = web::Data::new(web_driver);
     let ipfs = web::Data::new(ipfs);
 
-    tracing::info!("Running actix server");
+    tracing::info!("Running actix-web server");
     let server = actix_web::HttpServer::new(move || {
         actix_web::App::new()
             .route("/health_check", web::get().to(routes::health_check))
-            .route("/save_png", web::get().to(routes::save_png))
+            .route("/save_png", web::get().to(routes::get_png_and_push_ipfs))
             .app_data(web_driver.clone())
             .app_data(ipfs.clone())
     })
