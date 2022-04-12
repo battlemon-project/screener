@@ -29,6 +29,7 @@ pub fn run(
     Ok(server)
 }
 
+#[tracing::instrument(name = "Connecting to webdriver")]
 pub async fn connect_web_driver(address: &str, headless: bool) -> Result<WebDriver> {
     let browser_settings = config::set_up_browser()?;
     let mut capabilities = thirtyfour::DesiredCapabilities::firefox();
