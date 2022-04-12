@@ -1,17 +1,21 @@
 use std::io::Cursor;
 use std::time::Duration;
 
-use actix_web::http::StatusCode;
-use actix_web::{web, HttpResponse};
+use actix_web::{web, HttpRequest, HttpResponse};
 use ipfs_api_backend_hyper::{IpfsApi, IpfsClient};
 use thirtyfour::{By, WebDriver};
 use tokio::time::sleep;
 
 use crate::config::get_config;
 
-pub async fn save_png(driver: web::Data<WebDriver>, ipfs: web::Data<IpfsClient>) -> HttpResponse {
+pub async fn save_png(
+    driver: web::Data<WebDriver>,
+    ipfs: web::Data<IpfsClient>,
+    req: HttpRequest,
+) -> HttpResponse {
     let constructor_url = &get_config().await.constructor.url();
-    driver.get(constructor_url).await.expect("Couldn't get url");
+    let url = format!("{}/{}", constructor_url, req.query_string());
+    driver.get(url).await.expect("Couldn't get url");
 
     while driver.find_element(By::Id("download")).await.is_err() {
         sleep(Duration::from_millis(100)).await;
