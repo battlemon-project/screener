@@ -10,13 +10,10 @@ async fn main() -> std::io::Result<()> {
     tracing::info!("Bind listener.");
     let listener =
         std::net::TcpListener::bind(config.application.address()).expect("Couldn't bind address");
-    let web_driver =
-        startup::connect_web_driver(&config.webdriver.url(), config.webdriver.headless())
-            .await
-            .expect("Couldn't connect to webdriver");
+
     tracing::info!("Connect to IPFS.");
     let ipfs = ipfs_api_backend_hyper::IpfsClient::from_str(&config.ipfs.url())
         .expect("Couldn't connect to IPFS");
 
-    startup::run(listener, web_driver, ipfs)?.await
+    startup::run(listener, ipfs)?.await
 }
