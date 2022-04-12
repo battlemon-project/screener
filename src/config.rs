@@ -116,6 +116,7 @@ impl TryFrom<String> for Environment {
 
 static CONFIG: OnceCell<Settings> = OnceCell::const_new();
 
+#[tracing::instrument(name = "Getting config")]
 pub async fn get_config() -> &'static Settings {
     CONFIG
         .get_or_init(|| async { load_config().expect("Couldn't load config") })
