@@ -4,7 +4,7 @@ use battlemon_screener::{config, startup, telemetry};
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
-    let subscriber = telemetry::get_subscriber("battlemon_indexer".into(), "info".into());
+    let subscriber = telemetry::get_subscriber("battlemon_screener".into(), "info".into());
     telemetry::init_subscriber(subscriber);
     let config = config::get_config().await;
     let listener =
