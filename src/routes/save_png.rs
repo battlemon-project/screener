@@ -15,7 +15,7 @@ pub async fn get_png_and_push_ipfs(
     ipfs: web::Data<IpfsClient>,
 ) -> HttpResponse {
     let constructor_url = &get_config().await.constructor.url();
-    let url = format!("{}/{}", constructor_url, req.query_string());
+    let url = format!("{}?{}", constructor_url, req.query_string());
     tracing::info!("Url: {}", url);
     driver.get(url).await.expect("Couldn't get url");
 
