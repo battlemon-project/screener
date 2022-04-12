@@ -1,9 +1,11 @@
 use ipfs_api_backend_hyper::TryFromUri;
 
-use battlemon_screener::{config, startup};
+use battlemon_screener::{config, startup, telemetry};
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
+    let subscriber = telemetry::get_subscriber("battlemon_indexer".into(), "info".into());
+    telemetry::init_subscriber(subscriber);
     let config = config::get_config().await;
     let listener =
         std::net::TcpListener::bind(config.application.address()).expect("Couldn't bind address");
