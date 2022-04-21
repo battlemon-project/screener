@@ -1,7 +1,7 @@
 application:
   port: 8000
 webdriver:
-  headless: false
+  headless: true
   port: 4444
 constructor:
   address: constructor
